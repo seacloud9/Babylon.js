@@ -1,4 +1,5 @@
-import * as SRD from "storm-react-diagrams";
+import { AbstractReactFactory, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
 import * as React from "react";
 import { GlobalState } from '../../../globalState';
 import { ReflectionTextureNodeModel } from './reflectionTextureNodeModel';
@@ -7,7 +8,7 @@ import { ReflectionTextureNodeWidget } from './reflectionTextureNodeWidget';
 /**
  * Node factory which creates editor nodes
  */
-export class ReflectionTextureNodeFactory extends SRD.AbstractNodeFactory {
+export class ReflectionTextureNodeFactory extends AbstractReactFactory<ReflectionTextureNodeModel, DiagramEngine>{
     private _globalState: GlobalState;
 
 	/**
@@ -25,15 +26,15 @@ export class ReflectionTextureNodeFactory extends SRD.AbstractNodeFactory {
 	 * @param node node to generate
 	 * @returns node widget jsx
 	 */
-    generateReactWidget(diagramEngine: SRD.DiagramEngine, node: ReflectionTextureNodeModel): JSX.Element {
-        return <ReflectionTextureNodeWidget node={node} globalState={this._globalState} />;
+    generateReactWidget(event: GenerateWidgetEvent<ReflectionTextureNodeModel>): JSX.Element {
+        return <ReflectionTextureNodeWidget node={event.model} globalState={this._globalState} />;
     }
 
 	/**
 	 * Gets a new instance of a node model
 	 * @returns texture node model
 	 */
-    getNewInstance() {
+    generateModel() {
         return new ReflectionTextureNodeModel();
     }
 }

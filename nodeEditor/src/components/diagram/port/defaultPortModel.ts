@@ -1,4 +1,4 @@
-import { LinkModel, PortModel } from "storm-react-diagrams";
+import { LinkModel, PortModel } from '@projectstorm/react-diagrams';
 import { Nullable } from 'babylonjs/types';
 import { NodeMaterialConnectionPoint } from 'babylonjs/Materials/Node/nodeMaterialBlockConnectionPoint';
 import { DefaultNodeModel } from '../defaultNodeModel';
@@ -11,19 +11,25 @@ export class DefaultPortModel extends PortModel {
 	/**
 	 * If the port is input or output
 	 */
-    public position: string | "input" | "output";
+    public kind: string | "input" | "output";
 	/**
 	 * What the port is connected to
 	 */
     public connection: Nullable<NodeMaterialConnectionPoint> = null;
 
+    public label: string;
+
     public defaultValue: any;
 
     static idCounter = 0;
 
-    constructor(name: string, type: string = "input") {
-        super(name, "generic");
-        this.position = type;
+    constructor(name: string, kind: string = "input") {
+        super({
+            name: name, 
+            type: "generic"
+        });
+        this.label = name;
+        this.kind = kind;
         DefaultPortModel.idCounter++;
     }
 
@@ -37,7 +43,7 @@ export class DefaultPortModel extends PortModel {
 
     syncWithNodeMaterialConnectionPoint(connection: NodeMaterialConnectionPoint) {
         this.connection = connection;
-        this.name = connection.name;
+        this.label = connection.name;
     }
 
     getNodeModel() {
@@ -58,12 +64,12 @@ export class DefaultPortModel extends PortModel {
     static SortInputOutput(a: Nullable<DefaultPortModel>, b: Nullable<DefaultPortModel>) {
         if (!a || !b) {
             return null;
-        } else if (a.position == "output" && b.position == "input") {
+        } else if (a.kind == "output" && b.kind == "input") {
             return {
                 input: b,
                 output: a
             }
-        } else if (b.position == "output" && a.position == "input") {
+        } else if (b.kind == "output" && a.kind == "input") {
             return {
                 input: a,
                 output: b

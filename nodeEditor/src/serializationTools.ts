@@ -14,8 +14,8 @@ export class SerializationTools {
 
             material.editorData.push({
                 blockId: block.uniqueId,
-                x: node ? node.x : 0,
-                y: node ? node.y : 0
+                x: node ? node.getX() : 0,
+                y: node ? node.getY() : 0
             });
         }
     }
@@ -36,8 +36,8 @@ export class SerializationTools {
 
             serializationObject.locations.push({
                 blockId: block.uniqueId,
-                x: node ? node.x : 0,
-                y: node ? node.y : 0
+                x: node ? node.getX() : 0,
+                y: node ? node.getY() : 0
             });
         }
 

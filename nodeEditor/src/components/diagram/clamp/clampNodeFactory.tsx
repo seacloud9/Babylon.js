@@ -1,10 +1,11 @@
-import * as SRD from "storm-react-diagrams";
+import { AbstractReactFactory, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
 import * as React from "react";
 import { GlobalState } from '../../../globalState';
 import { ClampNodeWidget } from './clampNodeWidget';
 import { ClampNodeModel } from './clampNodeModel';
 
-export class ClampNodeFactory extends SRD.AbstractNodeFactory {
+export class ClampNodeFactory extends AbstractReactFactory<ClampNodeModel, DiagramEngine>{
     private _globalState: GlobalState;
 
     constructor(globalState: GlobalState) {
@@ -13,11 +14,11 @@ export class ClampNodeFactory extends SRD.AbstractNodeFactory {
         this._globalState = globalState;
     }
 
-    generateReactWidget(diagramEngine: SRD.DiagramEngine, node: ClampNodeModel): JSX.Element {
-        return <ClampNodeWidget node={node} globalState={this._globalState} />;
+    generateReactWidget(event: GenerateWidgetEvent<ClampNodeModel>): JSX.Element {
+        return <ClampNodeWidget node={event.model} globalState={this._globalState} />;
     }
 
-    getNewInstance() {
+    generateModel() {
         return new ClampNodeModel();
     }
 }

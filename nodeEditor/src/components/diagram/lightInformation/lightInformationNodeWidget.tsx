@@ -25,12 +25,14 @@ export class LightInformationNodeWidget extends React.Component<ILightInformatio
         this.state = {};
 
         if (this.props.node) {
-            this.props.node.addListener({
-                selectionChanged: () => {
-                    let selected = (this.props.node as any).selected;
-                    this.props.globalState.onSelectionChangedObservable.notifyObservers(selected ? this.props.node : null);
-                }
-            });
+
+            // TODO
+            // this.props.node.addListener({
+            //     selectionChanged: () => {
+            //         let selected = (this.props.node as any).selected;
+            //         this.props.globalState.onSelectionChangedObservable.notifyObservers(selected ? this.props.node : null);
+            //     }
+            // });
         }
     }
 

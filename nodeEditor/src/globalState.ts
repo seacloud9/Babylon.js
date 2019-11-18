@@ -3,11 +3,11 @@ import { Nullable } from "babylonjs/types"
 import { Observable } from 'babylonjs/Misc/observable';
 import { DefaultNodeModel } from './components/diagram/defaultNodeModel';
 import { LogEntry } from './components/log/logComponent';
-import { NodeModel } from 'storm-react-diagrams';
 import { NodeMaterialBlock } from 'babylonjs/Materials/Node/nodeMaterialBlock';
 import { PreviewMeshType } from './components/preview/previewMeshType';
 import { DataStorage } from './dataStorage';
 import { Color4 } from 'babylonjs/Maths/math.color';
+import { NodeModel } from '@projectstorm/react-diagrams-core/dist/@types/src/entities/node/NodeModel';
 
 export class GlobalState {
     nodeMaterial: NodeMaterial;

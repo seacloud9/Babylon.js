@@ -42,14 +42,14 @@ export class PortHelper {
         let outputPorts = [];
         for (var key in node.ports) {
             let port = node.ports[key] as DefaultPortModel;
-            if (port.position === "output") {
+            if (port.kind === "output") {
                 let typeIndicator = this._GetPortTypeIndicator(port.connection!);
 
                 let style = this._GetPortStyle(port.connection!.type);
 
                 outputPorts.push(
                     <div key={key}                                    
-				        title={port.name}
+				        title={port.kind}
                         className="output-port">
                         {
                             !ignoreLabel &&
@@ -58,7 +58,7 @@ export class PortHelper {
                             </div>
                         }
                         <div className="output-port-plug">
-                            <DefaultPortWidget key={key} name={port.name} node={node} style={style} />
+                            <DefaultPortWidget key={key} name={port.kind} node={node} style={style} />
                             <div className="output-port-type"> 
                                 {
                                     typeIndicator
@@ -80,17 +80,17 @@ export class PortHelper {
         let inputPorts = [];
         for (var key in node.ports) {
             let port = node.ports[key] as DefaultPortModel;
-            if (port.position === "input") {                
+            if (port.kind === "input") {                
                 let typeIndicator = this._GetPortTypeIndicator(port.connection!);
                 let style = this._GetPortStyle(port.connection!.type);
 
-                if (!includeOnly || includeOnly.indexOf(port.name) !== -1) {
+                if (!includeOnly || includeOnly.indexOf(port.kind) !== -1) {
                     inputPorts.push(
                         <div key={key}                         
-				            title={port.name}
+				            title={port.kind}
                             className="input-port">
                             <div className="input-port-plug">
-                                <DefaultPortWidget key={key} name={port.name} node={node} style={style}/>
+                                <DefaultPortWidget key={key} name={port.kind} node={node} style={style}/>
                                 <div className="input-port-type"> 
                                     {
                                         typeIndicator

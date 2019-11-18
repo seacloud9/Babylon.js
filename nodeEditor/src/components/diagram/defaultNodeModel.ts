@@ -1,4 +1,4 @@
-import { NodeModel, DiagramModel } from "storm-react-diagrams";
+import { NodeModel, DiagramModel } from '@projectstorm/react-diagrams';
 import { Nullable } from 'babylonjs/types';
 import { NodeMaterialBlock } from 'babylonjs/Materials/Node/nodeMaterialBlock';
 import { GraphEditor, NodeCreationOptions } from '../../graphEditor';
@@ -20,7 +20,9 @@ export class DefaultNodeModel extends NodeModel {
 	 * Constructs the node model
 	 */
     constructor(key: string) {
-        super(key);
+        super({
+            type: key
+        });
     }
 
     prepare(options: NodeCreationOptions, nodes: Array<DefaultNodeModel>, model: DiagramModel, graphEditor: GraphEditor) {

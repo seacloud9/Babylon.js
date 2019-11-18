@@ -4,9 +4,9 @@ import { DefaultNodeModel } from '../defaultNodeModel';
 import { GlobalState } from '../../../globalState';
 import { TexturePropertyTabComponent } from './texturePropertyTabComponent';
 import { NodeCreationOptions, GraphEditor } from '../../../graphEditor';
-import { DiagramModel } from 'storm-react-diagrams/dist/@types/src/models/DiagramModel';
 import { TextureBlock } from 'babylonjs/Materials/Node/Blocks/Dual/textureBlock';
 import { Texture } from 'babylonjs/Materials/Textures/texture';
+import { DiagramModel } from '@projectstorm/react-diagrams-core';
 
 /**
  * Texture node model which stores information about a node editor block

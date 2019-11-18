@@ -5,8 +5,8 @@ import { DefaultNodeModel } from '../defaultNodeModel';
 import { GlobalState } from '../../../globalState';
 import { LightInformationPropertyTabComponent } from './lightInformationPropertyTabComponent';
 import { NodeCreationOptions, GraphEditor } from '../../../graphEditor';
-import { DiagramModel } from 'storm-react-diagrams/dist/@types/src/models/DiagramModel';
 import { LightInformationBlock } from 'babylonjs/Materials/Node/Blocks/Vertex/lightInformationBlock';
+import { DiagramModel } from '@projectstorm/react-diagrams-core/dist/@types/src/models/DiagramModel';
 
 export class LightInformationNodeModel extends DefaultNodeModel {
     private _block: LightInformationBlock;

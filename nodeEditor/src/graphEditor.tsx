@@ -1,9 +1,12 @@
 import {
     DiagramEngine,
     DiagramModel,
-    DiagramWidget,
     LinkModel
-} from "storm-react-diagrams";
+} from "@projectstorm/react-diagrams";
+
+import {
+    CanvasWidget
+} from '@projectstorm/react-canvas-core';
 
 import * as React from "react";
 import { GlobalState } from './globalState';
@@ -11,7 +14,7 @@ import { GlobalState } from './globalState';
 import { GenericNodeFactory } from './components/diagram/generic/genericNodeFactory';
 import { GenericNodeModel } from './components/diagram/generic/genericNodeModel';
 import { NodeMaterialBlock } from 'babylonjs/Materials/Node/nodeMaterialBlock';
-import { NodeMaterialConnectionPoint, NodeMaterialConnectionPointCompatibilityStates } from 'babylonjs/Materials/Node/nodeMaterialBlockConnectionPoint';
+import { NodeMaterialConnectionPoint } from 'babylonjs/Materials/Node/nodeMaterialBlockConnectionPoint';
 import { NodeListComponent } from './components/nodeList/nodeListComponent';
 import { PropertyTabComponent } from './components/propertyTab/propertyTabComponent';
 import { Portal } from './portal';
@@ -43,7 +46,6 @@ import { PreviewMeshControlComponent } from './components/preview/previewMeshCon
 import { TrigonometryNodeFactory } from './components/diagram/trigonometry/trigonometryNodeFactory';
 import { TrigonometryBlock } from 'babylonjs/Materials/Node/Blocks/trigonometryBlock';
 import { TrigonometryNodeModel } from './components/diagram/trigonometry/trigonometryNodeModel';
-import { AdvancedLinkModel } from './components/diagram/link/advancedLinkModel';
 import { ClampNodeFactory } from './components/diagram/clamp/clampNodeFactory';
 import { ClampNodeModel } from './components/diagram/clamp/clampNodeModel';
 import { ClampBlock } from 'babylonjs/Materials/Node/Blocks/clampBlock';
@@ -59,7 +61,7 @@ import { ReflectionTextureNodeFactory } from './components/diagram/reflectionTex
 import { ReflectionTextureNodeModel } from './components/diagram/reflectionTexture/reflectionTextureNodeModel';
 import { SerializationTools } from './serializationTools';
 
-require("storm-react-diagrams/dist/style.min.css");
+// require("storm-react-diagrams/dist/style.min.css");
 require("./main.scss");
 require("./components/diagram/diagram.scss");
 
@@ -93,8 +95,8 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
     private _mouseLocationY = 0;
     private _onWidgetKeyUpPointer: any;
 
-    private _altKeyIsPressed = false;
-    private _oldY = -1;
+    //private _altKeyIsPressed = false;
+    //private _oldY = -1;
 
     /** @hidden */
     public _toAdd: LinkModel[] | null = [];
@@ -163,49 +165,49 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
     }
 
     onWidgetKeyUp(evt: any) {        
-        this._altKeyIsPressed = false;
-        this._oldY = -1;
+   //     this._altKeyIsPressed = false;
+     //   this._oldY = -1;
 
-        var widget = (this.refs["test"] as DiagramWidget);
+        var widget = (this.refs["test"] as CanvasWidget);
 
         if (!widget || this.props.globalState.blockKeyboardEvents) {
             return;
         }
 
-        widget.onKeyUp(evt)
+        widget.keyUp(evt)
     }
 
     componentDidMount() {
         if (this.props.globalState.hostDocument) {
-            var widget = (this.refs["test"] as DiagramWidget);
-            widget.setState({ document: this.props.globalState.hostDocument })
-            this._onWidgetKeyUpPointer = this.onWidgetKeyUp.bind(this)
-            this.props.globalState.hostDocument!.addEventListener("keyup", this._onWidgetKeyUpPointer, false);
-            this.props.globalState.hostDocument!.defaultView!.addEventListener("blur", () => this._altKeyIsPressed = false, false);
+            // var widget = (this.refs["test"] as CanvasWidget);
+            // widget.setState({ document: this.props.globalState.hostDocument })
+            // this._onWidgetKeyUpPointer = this.onWidgetKeyUp.bind(this)
+            // this.props.globalState.hostDocument!.addEventListener("keyup", this._onWidgetKeyUpPointer, false);
+            // this.props.globalState.hostDocument!.defaultView!.addEventListener("blur", () => this._altKeyIsPressed = false, false);
 
-            let previousMouseMove = widget.onMouseMove;
-            widget.onMouseMove = (evt: any) => {
-                if (this._altKeyIsPressed && evt.buttons === 1) {
-                    if (this._oldY < 0) {
-                        this._oldY = evt.pageY;
-                    }
+            // let previousMouseMove = widget.onMouseMove;
+            // widget.onMouseMove = (evt: any) => {
+            //     if (this._altKeyIsPressed && evt.buttons === 1) {
+            //         if (this._oldY < 0) {
+            //             this._oldY = evt.pageY;
+            //         }
 
-                    let zoomDelta = (evt.pageY - this._oldY) / 10;
-                    if (Math.abs(zoomDelta) > 5) {
-                        this._engine.diagramModel.setZoomLevel(this._engine.diagramModel.getZoomLevel() + zoomDelta);
-                        this._engine.repaintCanvas();
-                        this._oldY = evt.pageY;      
-                    }
-                    return;
-                }
-                previousMouseMove(evt);
-            }
+            //         let zoomDelta = (evt.pageY - this._oldY) / 10;
+            //         if (Math.abs(zoomDelta) > 5) {
+            //             this._engine.diagramModel.setZoomLevel(this._engine.diagramModel.getZoomLevel() + zoomDelta);
+            //             this._engine.repaintCanvas();
+            //             this._oldY = evt.pageY;      
+            //         }
+            //         return;
+            //     }
+            //     previousMouseMove(evt);
+            // }
 
-            let previousMouseUp = widget.onMouseUp;
-            widget.onMouseUp = (evt: any) => {
-                this._oldY = -1;
-                previousMouseUp(evt);
-            }
+            // let previousMouseUp = widget.onMouseUp;
+            // widget.onMouseUp = (evt: any) => {
+            //     this._oldY = -1;
+            //     previousMouseUp(evt);
+            // }
 
             this._previewManager = new PreviewManager(this.props.globalState.hostDocument.getElementById("preview-canvas") as HTMLCanvasElement, this.props.globalState);
         }
@@ -230,18 +232,17 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
 
         // setup the diagram engine
         this._engine = new DiagramEngine();
-        this._engine.installDefaultFactories()
-        this._engine.registerNodeFactory(new GenericNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new TextureNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new LightNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new InputNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new RemapNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new TrigonometryNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new ClampNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new LightInformationNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new GradientNodeFactory(this.props.globalState));
-        this._engine.registerNodeFactory(new ReflectionTextureNodeFactory(this.props.globalState));
-        this._engine.registerLinkFactory(new AdvancedLinkFactory());
+        this._engine.getNodeFactories().registerFactory(new GenericNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new TextureNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new LightNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new InputNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new RemapNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new TrigonometryNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new ClampNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new LightInformationNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new GradientNodeFactory(this.props.globalState));
+        this._engine.getNodeFactories().registerFactory(new ReflectionTextureNodeFactory(this.props.globalState));
+        this._engine.getLinkFactories().registerFactory(new AdvancedLinkFactory());
 
         this.props.globalState.onRebuildRequiredObservable.add(() => {
             if (this.props.globalState.nodeMaterial) {
@@ -273,14 +274,16 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
         }
 
         this.props.globalState.hostDocument!.addEventListener("keydown", evt => {
-            this._altKeyIsPressed = evt.altKey;
+           // this._altKeyIsPressed = evt.altKey;
 
             if (!evt.ctrlKey) {
                 return;
             }
 
+            let model = this._engine.getModel();
+
             if (evt.key === "c") {
-                let selectedItems = this._engine.diagramModel.getSelectedItems();
+                let selectedItems = model.getSelectedEntities();
                 if (!selectedItems.length) {
                     return;
                 }
@@ -298,9 +301,9 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
                 }
 
                 const rootElement = this.props.globalState.hostDocument!.querySelector(".diagram-container") as HTMLDivElement;
-                const zoomLevel = this._engine.diagramModel.getZoomLevel() / 100.0;
-                let currentX = (this._mouseLocationX - rootElement.offsetLeft - this._engine.diagramModel.getOffsetX() - this.NodeWidth) / zoomLevel;
-                let currentY = (this._mouseLocationY - rootElement.offsetTop - this._engine.diagramModel.getOffsetY() - 20) / zoomLevel;
+                const zoomLevel = model.getZoomLevel() / 100.0;
+                let currentX = (this._mouseLocationX - rootElement.offsetLeft - model.getOffsetX() - this.NodeWidth) / zoomLevel;
+                let currentY = (this._mouseLocationY - rootElement.offsetTop - model.getOffsetY() - 20) / zoomLevel;
                 let originalNode: Nullable<DefaultNodeModel> = null;
 
                 for (var node of this._copiedNodes) {
@@ -321,8 +324,8 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
                     let x = 0;
                     let y = 0;
                     if (originalNode) {
-                        x = currentX + node.x - originalNode.x;
-                        y = currentY + node.y - originalNode.y;
+                        x = currentX + node.getX() - originalNode.getX();
+                        y = currentY + node.getY() - originalNode.getY();
                     } else {
                         originalNode = node;
                         x = currentX;
@@ -341,16 +344,18 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
     }
 
     zoomToFit(retry = 0) {
-        const xFactor = this._engine.canvas.clientWidth / this._engine.canvas.scrollWidth;
-        const yFactor = this._engine.canvas.clientHeight / this._engine.canvas.scrollHeight;
+        let canvas = this._engine.getCanvas();
+        const xFactor = canvas.clientWidth / canvas.scrollWidth;
+        const yFactor = canvas.clientHeight / canvas.scrollHeight;
         const zoomFactor = xFactor < yFactor ? xFactor : yFactor;
 
         if (zoomFactor === 1) {
             return;
         }
 
-        this._engine.diagramModel.setZoomLevel(this._engine.diagramModel.getZoomLevel() * zoomFactor);
-        this._engine.diagramModel.setOffset(0, 0);
+        let model = this._engine.getModel();
+        model.setZoomLevel(model.getZoomLevel() * zoomFactor);
+        model.setOffset(0, 0);
         this._engine.repaintCanvas();
         retry++;
         if (retry < 4) {
@@ -375,13 +380,13 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
     }
 
     applyFragmentOutputConstraints(rootInput: DefaultPortModel) {
-        var model = rootInput.parent as GenericNodeModel;
+        var model = rootInput.getParent() as GenericNodeModel;
         for (var inputKey in model.getPorts()) {                                       
             let input = model.getPorts()[inputKey];
 
-            if (rootInput.name === "rgba" && (inputKey === "a" || inputKey === "rgb")
+            if (rootInput.getName() === "rgba" && (inputKey === "a" || inputKey === "rgb")
                 ||
-                (rootInput.name === "a" || rootInput.name === "rgb") && inputKey === "rgba") {
+                (rootInput.getName() === "a" || rootInput.getName() === "rgb") && inputKey === "rgba") {
                     for (var key in input.links) {
                         let other = input.links[key];
                         other.remove();
@@ -399,150 +404,155 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
         this._blocks = [];
 
         // Listen to events
-        this._model.addListener({
-            nodesUpdated: (e) => {                
-                if (!e.isCreated) {
-                    // Block is deleted
-                    let targetBlock = (e.node as GenericNodeModel).block;
+        this._model.registerListener({
+            eventDidFire: (event: any) => {
 
-                    if (targetBlock) {
-                        let attachedBlockIndex = this.props.globalState.nodeMaterial!.attachedBlocks.indexOf(targetBlock);
-                        if (attachedBlockIndex > -1) {
-                            this.props.globalState.nodeMaterial!.attachedBlocks.splice(attachedBlockIndex, 1);
-                        }
-
-                        if (targetBlock.isFinalMerger) {
-                            this.props.globalState.nodeMaterial!.removeOutputNode(targetBlock);
-                        }
-                        let blockIndex = this._blocks.indexOf(targetBlock);
-
-                        if (blockIndex > -1) {
-                            this._blocks.splice(blockIndex, 1);
-                        }
-                    }                  
-
-                    this.props.globalState.onSelectionChangedObservable.notifyObservers(null);
-                } else {
-
-                }
-            },
-            linksUpdated: (e) => {
-                if (!e.isCreated) {
-                    // Link is deleted
-                    this.props.globalState.onSelectionChangedObservable.notifyObservers(null);
-                    let sourcePort = e.link.sourcePort as DefaultPortModel;
-
-                    var link = DefaultPortModel.SortInputOutput(sourcePort, e.link.targetPort as DefaultPortModel);
-                    if (link) {
-                        if (link.input.connection && link.output.connection) {
-                            if (link.input.connection.connectedPoint) {
-                                // Disconnect standard nodes
-                                link.output.connection.disconnectFrom(link.input.connection);
-                                link.input.syncWithNodeMaterialConnectionPoint(link.input.connection);
-                                link.output.syncWithNodeMaterialConnectionPoint(link.output.connection);
-                                
-                                this.props.globalState.onRebuildRequiredObservable.notifyObservers();
-                            }
-                        }
-                    } else {
-                        if (!e.link.targetPort && e.link.sourcePort && (e.link.sourcePort as DefaultPortModel).position === "input" && !(e.link.sourcePort as DefaultPortModel).connection!.isConnected) {
-                            // Drag from input port, we are going to build an input for it                            
-                            let input = e.link.sourcePort as DefaultPortModel;
-
-                            if (input.connection!.type == NodeMaterialBlockConnectionPointTypes.AutoDetect) {
-                                return;
-                            }
-
-                            let nodeModel = this.addValueNode(BlockTools.GetStringFromConnectionNodeType(input.connection!.type));
-                            let link = nodeModel.ports.output.link(input);
-
-                            nodeModel.x = e.link.points[1].x - this.NodeWidth;
-                            nodeModel.y = e.link.points[1].y;
-
-                            setTimeout(() => {
-                                this._model.addLink(link);
-                                input.syncWithNodeMaterialConnectionPoint(input.connection!);
-                                nodeModel.ports.output.syncWithNodeMaterialConnectionPoint(nodeModel.ports.output.connection!);      
-                                
-                                let isFragmentOutput = (input.parent as DefaultNodeModel).block!.getClassName() === "FragmentOutputBlock";
-
-                                if (isFragmentOutput) {
-                                    this.applyFragmentOutputConstraints(input);
-                                }
-
-                                this.forceUpdate();
-                            }, 1);
-                           
-                            nodeModel.ports.output.connection!.connectTo(input.connection!);
-                            this.props.globalState.onRebuildRequiredObservable.notifyObservers();
-                        }
-                    }
-                    this.forceUpdate();
-                    return;
-                } else {
-                    e.link.addListener({
-                        sourcePortChanged: () => {
-                        },
-                        targetPortChanged: (evt) => {
-                            // Link is created with a target port
-                            var link = DefaultPortModel.SortInputOutput(e.link.sourcePort as DefaultPortModel, e.link.targetPort as DefaultPortModel);
-    
-                            if (link) {
-                                if (link.output.connection && link.input.connection) {
-                                    let currentBlock = link.input.connection.ownerBlock;
-                                    let isFragmentOutput = currentBlock.getClassName() === "FragmentOutputBlock";
-    
-                                    // Disconnect previous connection
-                                    for (var key in link.input.links) {
-                                        let other = link.input.links[key];
-                                        let sourcePortConnection = (other.getSourcePort() as DefaultPortModel).connection;
-                                        let targetPortConnection = (other.getTargetPort() as DefaultPortModel).connection;
-    
-                                        if (
-                                            sourcePortConnection !== (link.output as DefaultPortModel).connection && 
-                                            targetPortConnection !== (link.output as DefaultPortModel).connection
-                                        ) {
-                                            other.remove();
-                                        }
-                                    }
-    
-                                    let compatibilityState = link.output.connection.checkCompatibilityState(link.input.connection);
-                                    if (compatibilityState === NodeMaterialConnectionPointCompatibilityStates.Compatible) {
-                                        if (isFragmentOutput) {
-                                            this.applyFragmentOutputConstraints(link.input);
-                                        }
-        
-                                        link.output.connection.connectTo(link.input.connection);
-                                    } else {
-                                        (evt.entity as AdvancedLinkModel).remove();
-
-                                        let message = "";
-
-                                        switch (compatibilityState) {
-                                            case NodeMaterialConnectionPointCompatibilityStates.TypeIncompatible:
-                                                message = "Cannot connect two different connection types";
-                                                break;
-                                            case NodeMaterialConnectionPointCompatibilityStates.TargetIncompatible:
-                                                message = "Source block can only work in fragment shader whereas destination block is currently aimed for the vertex shader";
-                                                break;
-                                        }
-
-                                        this.props.globalState.onErrorMessageDialogRequiredObservable.notifyObservers(message);    
-                                    }
-    
-                                    this.forceUpdate();
-                                }
-                                if (this.props.globalState.nodeMaterial) {
-                                    this.buildMaterial();
-                                }
-                            } else {
-                                e.link.remove();
-                            }
-                        }
-                    });
-                }             
             }
         });
+        // this._model.addListener({
+        //     nodesUpdated: (e) => {                
+        //         if (!e.isCreated) {
+        //             // Block is deleted
+        //             let targetBlock = (e.node as GenericNodeModel).block;
+
+        //             if (targetBlock) {
+        //                 let attachedBlockIndex = this.props.globalState.nodeMaterial!.attachedBlocks.indexOf(targetBlock);
+        //                 if (attachedBlockIndex > -1) {
+        //                     this.props.globalState.nodeMaterial!.attachedBlocks.splice(attachedBlockIndex, 1);
+        //                 }
+
+        //                 if (targetBlock.isFinalMerger) {
+        //                     this.props.globalState.nodeMaterial!.removeOutputNode(targetBlock);
+        //                 }
+        //                 let blockIndex = this._blocks.indexOf(targetBlock);
+
+        //                 if (blockIndex > -1) {
+        //                     this._blocks.splice(blockIndex, 1);
+        //                 }
+        //             }                  
+
+        //             this.props.globalState.onSelectionChangedObservable.notifyObservers(null);
+        //         } else {
+
+        //         }
+        //     },
+        //     linksUpdated: (e) => {
+        //         if (!e.isCreated) {
+        //             // Link is deleted
+        //             this.props.globalState.onSelectionChangedObservable.notifyObservers(null);
+        //             let sourcePort = e.link.sourcePort as DefaultPortModel;
+
+        //             var link = DefaultPortModel.SortInputOutput(sourcePort, e.link.targetPort as DefaultPortModel);
+        //             if (link) {
+        //                 if (link.input.connection && link.output.connection) {
+        //                     if (link.input.connection.connectedPoint) {
+        //                         // Disconnect standard nodes
+        //                         link.output.connection.disconnectFrom(link.input.connection);
+        //                         link.input.syncWithNodeMaterialConnectionPoint(link.input.connection);
+        //                         link.output.syncWithNodeMaterialConnectionPoint(link.output.connection);
+                                
+        //                         this.props.globalState.onRebuildRequiredObservable.notifyObservers();
+        //                     }
+        //                 }
+        //             } else {
+        //                 if (!e.link.targetPort && e.link.sourcePort && (e.link.sourcePort as DefaultPortModel).position === "input" && !(e.link.sourcePort as DefaultPortModel).connection!.isConnected) {
+        //                     // Drag from input port, we are going to build an input for it                            
+        //                     let input = e.link.sourcePort as DefaultPortModel;
+
+        //                     if (input.connection!.type == NodeMaterialBlockConnectionPointTypes.AutoDetect) {
+        //                         return;
+        //                     }
+
+        //                     let nodeModel = this.addValueNode(BlockTools.GetStringFromConnectionNodeType(input.connection!.type));
+        //                     let link = nodeModel.ports.output.link(input);
+
+        //                     nodeModel.x = e.link.points[1].x - this.NodeWidth;
+        //                     nodeModel.y = e.link.points[1].y;
+
+        //                     setTimeout(() => {
+        //                         this._model.addLink(link);
+        //                         input.syncWithNodeMaterialConnectionPoint(input.connection!);
+        //                         nodeModel.ports.output.syncWithNodeMaterialConnectionPoint(nodeModel.ports.output.connection!);      
+                                
+        //                         let isFragmentOutput = (input.getParent() as DefaultNodeModel).block!.getClassName() === "FragmentOutputBlock";
+
+        //                         if (isFragmentOutput) {
+        //                             this.applyFragmentOutputConstraints(input);
+        //                         }
+
+        //                         this.forceUpdate();
+        //                     }, 1);
+                           
+        //                     nodeModel.ports.output.connection!.connectTo(input.connection!);
+        //                     this.props.globalState.onRebuildRequiredObservable.notifyObservers();
+        //                 }
+        //             }
+        //             this.forceUpdate();
+        //             return;
+        //         } else {
+        //             e.link.addListener({
+        //                 sourcePortChanged: () => {
+        //                 },
+        //                 targetPortChanged: (evt) => {
+        //                     // Link is created with a target port
+        //                     var link = DefaultPortModel.SortInputOutput(e.link.sourcePort as DefaultPortModel, e.link.targetPort as DefaultPortModel);
+    
+        //                     if (link) {
+        //                         if (link.output.connection && link.input.connection) {
+        //                             let currentBlock = link.input.connection.ownerBlock;
+        //                             let isFragmentOutput = currentBlock.getClassName() === "FragmentOutputBlock";
+    
+        //                             // Disconnect previous connection
+        //                             for (var key in link.input.links) {
+        //                                 let other = link.input.links[key];
+        //                                 let sourcePortConnection = (other.getSourcePort() as DefaultPortModel).connection;
+        //                                 let targetPortConnection = (other.getTargetPort() as DefaultPortModel).connection;
+    
+        //                                 if (
+        //                                     sourcePortConnection !== (link.output as DefaultPortModel).connection && 
+        //                                     targetPortConnection !== (link.output as DefaultPortModel).connection
+        //                                 ) {
+        //                                     other.remove();
+        //                                 }
+        //                             }
+    
+        //                             let compatibilityState = link.output.connection.checkCompatibilityState(link.input.connection);
+        //                             if (compatibilityState === NodeMaterialConnectionPointCompatibilityStates.Compatible) {
+        //                                 if (isFragmentOutput) {
+        //                                     this.applyFragmentOutputConstraints(link.input);
+        //                                 }
+        
+        //                                 link.output.connection.connectTo(link.input.connection);
+        //                             } else {
+        //                                 (evt.entity as AdvancedLinkModel).remove();
+
+        //                                 let message = "";
+
+        //                                 switch (compatibilityState) {
+        //                                     case NodeMaterialConnectionPointCompatibilityStates.TypeIncompatible:
+        //                                         message = "Cannot connect two different connection types";
+        //                                         break;
+        //                                     case NodeMaterialConnectionPointCompatibilityStates.TargetIncompatible:
+        //                                         message = "Source block can only work in fragment shader whereas destination block is currently aimed for the vertex shader";
+        //                                         break;
+        //                                 }
+
+        //                                 this.props.globalState.onErrorMessageDialogRequiredObservable.notifyObservers(message);    
+        //                             }
+    
+        //                             this.forceUpdate();
+        //                         }
+        //                         if (this.props.globalState.nodeMaterial) {
+        //                             this.buildMaterial();
+        //                         }
+        //                     } else {
+        //                         e.link.remove();
+        //                     }
+        //                 }
+        //             });
+        //         }             
+        //     }
+        // });
 
         // Load graph of nodes from the material
         if (this.props.globalState.nodeMaterial) {
@@ -565,7 +575,7 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
                 this._model.addAll(...this._toAdd);
             }
             this._toAdd = null;
-            this._engine.setDiagramModel(this._model);
+            this._engine.setModel(this._model);
 
             this.forceUpdate();
 
@@ -577,10 +587,11 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
         if (!locations) {
             let nodes = GraphHelper.DistributeGraph(this._model);
             nodes.forEach(node => {
-                for (var nodeName in this._model.nodes) {
-                    let modelNode = this._model.nodes[nodeName];
+                let nodes = this._model.getNodes();
+                for (var nodeName in nodes) {
+                    let modelNode = nodes[nodeName];
 
-                    if (modelNode.id === node.id) {
+                    if (modelNode.getID() === node.id) {
                         modelNode.setPosition(node.x - node.width / 2, node.y - node.height / 2);
                         return;
                     }
@@ -666,10 +677,11 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
         };
 
         if (nodeModel) {
-            const zoomLevel = this._engine.diagramModel.getZoomLevel() / 100.0;
+            const model = this._engine.getModel();
+            const zoomLevel = model.getZoomLevel() / 100.0;
 
-            let x = (event.clientX - event.currentTarget.offsetLeft - this._engine.diagramModel.getOffsetX() - this.NodeWidth) / zoomLevel;
-            let y = (event.clientY - event.currentTarget.offsetTop - this._engine.diagramModel.getOffsetY() - 20) / zoomLevel;
+            let x = (event.clientX - event.currentTarget.offsetLeft - model.getOffsetX() - this.NodeWidth) / zoomLevel;
+            let y = (event.clientY - event.currentTarget.offsetTop - model.getOffsetY() - 20) / zoomLevel;
             nodeModel.setPosition(x, y);
         
             let block = nodeModel!.block;
@@ -681,7 +693,7 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
                     var existingNodes = this._nodes.filter((n) => { return n.block === (connection as any)._connectedPoint._ownerBlock });
                     let connectedNode = existingNodes[0];
 
-                    if (connectedNode.x === 0 && connectedNode.y === 0) {
+                    if (connectedNode.getX() === 0 && connectedNode.getY() === 0) {
                         connectedNode.setPosition(x, y);
                         y += 80;
                     }
@@ -739,11 +751,8 @@ export class GraphEditor extends React.Component<IGraphEditorProps> {
                             event.preventDefault();
                         }}
                     >
-                        <DiagramWidget className="diagram" deleteKeys={[46]} ref={"test"} 
-                        allowLooseLinks={false}
-                        inverseZoom={true} 
-                        diagramEngine={this._engine} 
-                        maxNumberPointsPerLink={0} />
+                        <CanvasWidget className="diagram" ref={"test"} 
+                            engine={this._engine} />
                     </div>
 
                     <div id="rightGrab"

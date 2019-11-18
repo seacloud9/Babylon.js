@@ -1,13 +1,14 @@
-import * as SRD from "storm-react-diagrams";
+import { AbstractReactFactory, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
 import { LightNodeWidget } from "./lightNodeWidget";
 import { LightNodeModel } from "./lightNodeModel";
 import * as React from "react";
 import { GlobalState } from '../../../globalState';
+import { DiagramEngine } from '@projectstorm/react-diagrams-core/dist/@types/src/DiagramEngine';
 
 /**
  * Node factory which creates editor nodes
  */
-export class LightNodeFactory extends SRD.AbstractNodeFactory {
+export class LightNodeFactory extends AbstractReactFactory<LightNodeModel, DiagramEngine>{
     private _globalState: GlobalState;
 
 	/**
@@ -25,15 +26,15 @@ export class LightNodeFactory extends SRD.AbstractNodeFactory {
 	 * @param node node to generate
 	 * @returns node widget jsx
 	 */
-    generateReactWidget(diagramEngine: SRD.DiagramEngine, node: LightNodeModel): JSX.Element {
-        return <LightNodeWidget node={node} globalState={this._globalState} />;
+    generateReactWidget(event: GenerateWidgetEvent<LightNodeModel>): JSX.Element {
+        return <LightNodeWidget node={event.model} globalState={this._globalState} />;
     }
 
 	/**
 	 * Gets a new instance of a node model
 	 * @returns light node model
 	 */
-    getNewInstance() {
+    generateModel() {
         return new LightNodeModel();
     }
 }

@@ -5,8 +5,8 @@ import { DefaultNodeModel } from '../defaultNodeModel';
 import { GlobalState } from '../../../globalState';
 import { LightPropertyTabComponent } from './lightPropertyTabComponent';
 import { NodeCreationOptions, GraphEditor } from '../../../graphEditor';
-import { DiagramModel } from 'storm-react-diagrams/dist/@types/src/models/DiagramModel';
 import { LightBlock } from 'babylonjs/Materials/Node/Blocks/Dual/lightBlock';
+import { DiagramModel } from '@projectstorm/react-diagrams-core/dist/@types/src/models/DiagramModel';
 
 /**
  * Light node model which stores information about a node editor block

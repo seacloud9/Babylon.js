@@ -1,4 +1,5 @@
-import * as SRD from "storm-react-diagrams";
+import { AbstractReactFactory, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
 import * as React from "react";
 import { GlobalState } from '../../../globalState';
 import { TrigonometryNodeModel } from './trigonometryNodeModel';
@@ -7,7 +8,7 @@ import { TrigonometryNodeWidget } from './trigonometryNodeWidget';
 /**
  * Node factory which creates editor nodes
  */
-export class TrigonometryNodeFactory extends SRD.AbstractNodeFactory {
+export class TrigonometryNodeFactory extends AbstractReactFactory<TrigonometryNodeModel, DiagramEngine>{
     private _globalState: GlobalState;
 
 	/**
@@ -25,15 +26,15 @@ export class TrigonometryNodeFactory extends SRD.AbstractNodeFactory {
 	 * @param node node to generate
 	 * @returns node widget jsx
 	 */
-    generateReactWidget(diagramEngine: SRD.DiagramEngine, node: TrigonometryNodeModel): JSX.Element {
-        return <TrigonometryNodeWidget node={node} globalState={this._globalState} />;
+    generateReactWidget(event: GenerateWidgetEvent<TrigonometryNodeModel>): JSX.Element {
+        return <TrigonometryNodeWidget node={event.model} globalState={this._globalState} />;
     }
 
 	/**
 	 * Gets a new instance of a node model
 	 * @returns input node model
 	 */
-    getNewInstance() {
+    generateModel() {
         return new TrigonometryNodeModel();
     }
 }

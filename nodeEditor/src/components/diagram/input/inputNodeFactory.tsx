@@ -1,13 +1,14 @@
-import * as SRD from "storm-react-diagrams";
+import { AbstractReactFactory, GenerateWidgetEvent } from '@projectstorm/react-canvas-core';
 import * as React from "react";
 import { GlobalState } from '../../../globalState';
 import { InputNodeModel } from './inputNodeModel';
 import { InputNodeWidget } from './inputNodeWidget';
+import { DiagramEngine } from '@projectstorm/react-diagrams-core/dist/@types/src/DiagramEngine';
 
 /**
  * Node factory which creates editor nodes
  */
-export class InputNodeFactory extends SRD.AbstractNodeFactory {
+export class InputNodeFactory extends AbstractReactFactory<InputNodeModel, DiagramEngine>{
     private _globalState: GlobalState;
 
 	/**
@@ -25,15 +26,15 @@ export class InputNodeFactory extends SRD.AbstractNodeFactory {
 	 * @param node node to generate
 	 * @returns node widget jsx
 	 */
-    generateReactWidget(diagramEngine: SRD.DiagramEngine, node: InputNodeModel): JSX.Element {
-        return <InputNodeWidget node={node} globalState={this._globalState} />;
+    generateReactWidget(event: GenerateWidgetEvent<InputNodeModel>): JSX.Element {
+        return <InputNodeWidget node={event.model} globalState={this._globalState} />;
     }
 
 	/**
 	 * Gets a new instance of a node model
 	 * @returns input node model
 	 */
-    getNewInstance() {
+    generateModel() {
         return new InputNodeModel();
     }
 }

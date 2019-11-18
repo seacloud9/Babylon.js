@@ -2,7 +2,6 @@ import * as React from "react";
 import { Nullable } from 'babylonjs/types';
 import { Vector2, Vector3, Vector4, Matrix } from 'babylonjs/Maths/math';
 import { DefaultNodeModel } from '../defaultNodeModel';
-import { DiagramModel } from 'storm-react-diagrams/dist/@types/src/models/DiagramModel';
 import { GraphEditor, NodeCreationOptions } from '../../../graphEditor';
 import { GlobalState } from '../../../globalState';
 import { TextLineComponent } from '../../../sharedComponents/textLineComponent';
@@ -10,6 +9,7 @@ import { LineContainerComponent } from '../../../sharedComponents/lineContainerC
 import { TextInputLineComponent } from '../../../sharedComponents/textInputLineComponent';
 import { CheckBoxLineComponent } from '../../../sharedComponents/checkBoxLineComponent';
 import { TransformBlock } from 'babylonjs/Materials/Node/Blocks/transformBlock';
+import { DiagramModel } from '@projectstorm/react-diagrams-core/dist/@types/src/models/DiagramModel';
 
 /**
  * Generic node model which stores information about a node editor block
