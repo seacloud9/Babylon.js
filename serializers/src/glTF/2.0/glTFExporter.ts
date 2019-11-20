@@ -1,4 +1,4 @@
-import { AccessorType, IBufferView, IAccessor, INode, IScene, IMesh, IMaterial, ITexture, IImage, ISampler, IAnimation, ImageMimeType, IMeshPrimitive, IBuffer, IGLTF, MeshPrimitiveMode, AccessorComponentType } from "babylonjs-gltf2interface";
+import { AccessorType, IBufferView, IAccessor, INode, IScene, IMesh, IMaterial, ITexture, IImage, ISampler, ISkin, IAnimation, ImageMimeType, IMeshPrimitive, IBuffer, IGLTF, MeshPrimitiveMode, AccessorComponentType } from "babylonjs-gltf2interface";
 
 import { FloatArray, Nullable, IndicesArray } from "babylonjs/types";
 import { Viewport, Color3, Vector2, Vector3, Vector4, Quaternion } from "babylonjs/Maths/math";
@@ -90,6 +90,11 @@ export class _Exporter {
      * Stores all the generated image information, which is referenced by glTF textures
      */
     public _images: IImage[];
+
+    /**
+     * Stores all the generated skinning information, which is referenced by glTF skins
+     */
+    public _skins: ISkin[];
 
     /**
      * Stores all the texture samplers
@@ -1243,6 +1248,8 @@ export class _Exporter {
 
         return this._glTFMaterialExporter._convertMaterialsToGLTFAsync(babylonScene.materials, ImageMimeType.PNG, true).then(() => {
             return this.createNodeMapAndAnimationsAsync(babylonScene, nodes, binaryWriter).then((nodeMap) => {
+                await this.createSkinsAsync(babylonScene, nodeMap, binaryWriter);
+                await this.createMorphTargetsAsync(babylonScene, nodeMap, binaryWriter);
                 this._nodeMap = nodeMap;
 
                 this._totalByteLength = binaryWriter.getByteOffset();
@@ -1300,6 +1307,46 @@ export class _Exporter {
                 }
             });
         });
+    }
+
+    /**
+     * Creates a glTF skin from a Babylon skeleton
+     * @param babylonScene Babylon Scene
+     * @param nodes Babylon transform nodes
+     * @param binaryWriter Buffer to write binary data to
+     * @returns Node mapping of unique id to index
+     */
+    private createSkinsAsync(babylonScene: Scene, nodeMap: { [key: number]: number }, binaryWriter: _BinaryWriter): Promise<void> {
+        return Promise.resolve().then(() =>{
+            for (let skeleton of babylonScene.skeletons){
+                // create skin
+                const skin: ISkin = { joints: []};
+                let inverseBindMatrices = [];
+                let skeletonRootIndex = skeleton.overrideMesh === null ? null : nodeMap[skeleton.overrideMesh.uniqueId];
+
+                for (let bone of skeleton.bones){
+                    let transformNode = bone.getTransformNode();
+                    if (transformNode){
+                        skin.joints.push(nodeMap[transformNode.uniqueId]);
+                        inverseBindMatrices.push(bone.getRestPose().invert());
+                    }
+                }
+                // create buffer view for inverse bind matrices
+                this.writeAttributeData(AccessorType.MAT4, )
+                this._skins.push(skin);
+            }
+        });
+    }
+
+    /**
+     * Creates a glTF morph target from a Babylon skeleton
+     * @param babylonScene Babylon Scene
+     * @param nodes Babylon transform nodes
+     * @param binaryWriter Buffer to write binary data to
+     * @returns Node mapping of unique id to index
+     */
+    private createMorphTargetsAsync(babylonScene: Scene, nodeMap: { [key: number]: number }, binaryWriter: _BinaryWriter): Promise<void> {
+        return Promise.resolve();
     }
 
     /**
