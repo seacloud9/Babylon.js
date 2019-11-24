@@ -62,6 +62,8 @@ import { DerivativeBlock } from 'babylonjs/Materials/Node/Blocks/Fragment/deriva
 import { RefractBlock } from 'babylonjs/Materials/Node/Blocks/refractBlock';
 import { ReflectBlock } from 'babylonjs/Materials/Node/Blocks/reflectBlock';
 import { DesaturateBlock } from 'babylonjs/Materials/Node/Blocks/desaturateBlock';
+import { GradientNoiseBlock } from 'babylonjs/Materials/Node/Blocks/gradientNoiseBlock';
+import {TilingAndOffsetBlock} from 'babylonjs/Materials/Node/Blocks/tilingAndOffsetBlock';
 
 export class BlockTools {
     public static GetBlockFromString(data: string, scene: Scene, nodeMaterial: NodeMaterial) {
@@ -177,7 +179,11 @@ export class BlockTools {
             case "PosterizeBlock":                                          
                 return new PosterizeBlock("Posterize");                              
             case "ArcTan2Block":                                          
-                return new ArcTan2Block("ArcTan2");                            
+                return new ArcTan2Block("ArcTan2"); 
+            case "GradientNoiseBlock":
+                return new GradientNoiseBlock("GradientNoise")  
+                case "TilingAndOffsetBlock":
+                        return new TilingAndOffsetBlock("TilingAndOffset")     
             case "GradientBlock":                                          
                 return new GradientBlock("Gradient");                             
             case "FrontFacingBlock":                                          
